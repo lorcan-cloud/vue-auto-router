@@ -73,6 +73,14 @@ export interface PluginOptions {
    * @description 文件需要导出一个函数，接收目录名和文件列表，返回路由文件内容
    */
   routeTemplate?: string;
+
+  /**
+   * 控制台输出语言
+   * @default 'EN'
+   * @example 'CN' 或 'EN'
+   * @description 控制台提示信息的语言，CN 为中文，EN 为英文
+   */
+  language?: 'CN' | 'EN';
 }
 
 /**
@@ -91,6 +99,8 @@ export interface RequiredOptions {
   forceOverwrite: string[];
   /** 自定义路由模板文件路径 */
   routeTemplate: string | undefined;
+  /** 控制台输出语言 */
+  language: 'CN' | 'EN';
 }
 
 /**

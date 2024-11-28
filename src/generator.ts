@@ -12,20 +12,74 @@ export class RouteGenerator {
   private options: RequiredOptions;
   private routeTemplateFunction: RouteTemplateFunction | null = null;
   
+  // 消息模板
+  private messages = {
+    EN: {
+      dirCreated: '✨ Directories created/verified successfully',
+      dirCreateError: 'Failed to create directories:',
+      noFiles: '⚠️ No .vue files found in the specified directory',
+      noFilesInDir: (dir: string) => `⚠️ No .vue files found in directory: ${dir}`,
+      noIndex: (dir: string) => 
+        `⚠️ No index.vue found in directory: ${dir}\n` +
+        `A default route with empty path will not be generated.`,
+      fileExists: (fileName: string, dirName: string) => 
+        `⚠️ Route file already exists: ${fileName}\n` +
+        `To update the route configuration:\n` +
+        `1. Add "${dirName}" to forceOverwrite option, or\n` +
+        `2. Manually delete the file and restart the server.`,
+      overwriting: (fileName: string) => `🔄 Overwriting route file: ${fileName} (forceOverwrite enabled)`,
+      generated: (path: string) => `✨ Generated route file: ${path}`,
+      writeError: '❌ Failed to write route file:',
+      templateNotFound: (path: string) => `⚠️ Route template file not found: ${path}`,
+      templateNotFunction: '⚠️ Route template must export a function',
+      templateLoaded: '✨ Route template loaded successfully',
+      templateLoadError: '❌ Failed to load route template:',
+      templateError: '❌ Failed to generate content using template:',
+      fallingBack: '↪️ Falling back to default template'
+    },
+    CN: {
+      dirCreated: '✨ 目录创建/验证成功',
+      dirCreateError: '创建目录失败：',
+      noFiles: '⚠️ 在指定目录中未找到 .vue 文件',
+      noFilesInDir: (dir: string) => `⚠️ 在目录 ${dir} 中未找到 .vue 文件`,
+      noIndex: (dir: string) => 
+        `⚠️ 在目录 ${dir} 中未找到 index.vue\n` +
+        `将不会生成默认的空路径路由。`,
+      fileExists: (fileName: string, dirName: string) => 
+        `⚠️ 路由文件已存在：${fileName}\n` +
+        `要更新路由配置，请：\n` +
+        `1. 将 "${dirName}" 添加到 forceOverwrite 选项中，或\n` +
+        `2. 手动删除文件并重启服务器。`,
+      overwriting: (fileName: string) => `🔄 正在覆盖路由文件：${fileName}（已启用强制覆盖）`,
+      generated: (path: string) => `✨ 已生成路由文件：${path}`,
+      writeError: '❌ 写入路由文件失败：',
+      templateNotFound: (path: string) => `⚠️ 未找到路由模板文件：${path}`,
+      templateNotFunction: '⚠️ 路由模板必须导出一个函数',
+      templateLoaded: '✨ 路由模板加载成功',
+      templateLoadError: '❌ 加载路由模板失败：',
+      templateError: '❌ 使用模板生成内容失败：',
+      fallingBack: '↪️ 回退到默认模板'
+    }
+  };
+
   constructor(options: PluginOptions) {
-    // 标准化路径，移除末尾斜杠
-    const normalizedOptions = {
+    this.options = {
       scanDir: this.normalizePath(options.scanDir || 'src/pages'),
       outputDir: this.normalizePath(options.outputDir || 'src/router/'),
       exclude: options.exclude || [],
       layoutPath: options.layoutPath || '@/pages/layout/index.vue',
       forceOverwrite: options.forceOverwrite || [],
-      routeTemplate: options.routeTemplate
+      routeTemplate: options.routeTemplate,
+      language: options.language || 'EN'  // 添加语言配置
     };
 
-    this.options = normalizedOptions;
     this.ensureDirectoriesExist();
     this.loadRouteTemplate();
+  }
+
+  // 获取当前语言的消息
+  private get msg() {
+    return this.messages[this.options.language];
   }
 
   /**
@@ -62,9 +116,9 @@ export class RouteGenerator {
       await mkdir(scanDirPath, { recursive: true });
       await mkdir(outputDirPath, { recursive: true });
       
-      console.log('✨ Directories created/verified successfully');
+      console.log(this.msg.dirCreated);
     } catch (error) {
-      console.error('Failed to create directories:', error);
+      console.error(this.msg.dirCreateError, error);
     }
   }
 
@@ -75,7 +129,7 @@ export class RouteGenerator {
     try {
       const files = await this.scanFiles();
       if (!files.length) {
-        console.warn('⚠️ No .vue files found in the specified directory');
+        console.warn(this.msg.noFiles);
         return;
       }
 
@@ -86,7 +140,7 @@ export class RouteGenerator {
       for (const [dir, groupFiles] of Object.entries(fileGroups)) {
         // 检查目录是否有文件
         if (!groupFiles.length) {
-          console.warn(`⚠️ No .vue files found in directory: ${dir}`);
+          console.warn(this.msg.noFilesInDir(dir));
           continue;
         }
 
@@ -96,10 +150,7 @@ export class RouteGenerator {
         );
 
         if (!hasIndex) {
-          console.warn(
-            `⚠️ No index.vue found in directory: ${dir}\n` +
-            `A default route with empty path will not be generated.`
-          );
+          console.warn(this.msg.noIndex(dir));
         }
 
         const routes = [{
@@ -231,21 +282,16 @@ export class RouteGenerator {
       // 检查文件是否已存在
       if (await this.fileExists(outputPath)) {
         if (!forceOverwrite) {
-          console.warn(
-            `⚠️ Route file already exists: ${fileName}\n` +
-            `To update the route configuration:\n` +
-            `1. Add "${dirName}" to forceOverwrite option, or\n` +
-            `2. Manually delete the file and restart the server.`
-          );
+          console.warn(this.msg.fileExists(fileName, dirName));
           return;
         }
-        console.log(`🔄 Overwriting route file: ${fileName} (forceOverwrite enabled)`);
+        console.log(this.msg.overwriting(fileName));
       }
 
       await fs.writeFile(outputPath, content, 'utf-8');
-      console.log(`✨ Generated route file: ${outputPath}`);
+      console.log(this.msg.generated(outputPath));
     } catch (error) {
-      console.error('❌ Failed to write route file:', error);
+      console.error(this.msg.writeError, error);
       throw error;
     }
   }
@@ -366,20 +412,20 @@ export class RouteGenerator {
     try {
       const templatePath = path.resolve(process.cwd(), this.options.routeTemplate);
       if (!existsSync(templatePath)) {
-        console.warn(`⚠️ Route template file not found: ${templatePath}`);
+        console.warn(this.msg.templateNotFound(templatePath));
         return;
       }
 
       const template = require(templatePath);
       if (typeof template !== 'function') {
-        console.warn('⚠️ Route template must export a function');
+        console.warn(this.msg.templateNotFunction);
         return;
       }
 
       this.routeTemplateFunction = template;
-      console.log('✨ Route template loaded successfully');
+      console.log(this.msg.templateLoaded);
     } catch (error) {
-      console.error('❌ Failed to load route template:', error);
+      console.error(this.msg.templateLoadError, error);
     }
   }
 
@@ -413,8 +459,8 @@ export class RouteGenerator {
 
         return content;
       } catch (error) {
-        console.error('❌ Failed to generate content using template:', error);
-        console.log('��️ Falling back to default template');
+        console.error(this.msg.templateError, error);
+        console.log(this.msg.fallingBack);
       }
     }
 

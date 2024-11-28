@@ -13,6 +13,28 @@ function VueAutoRouter(options: PluginOptions = {}): Plugin {
   let server: ViteDevServer | undefined;
   let isWatcherEnabled = false;
 
+  // 消息模板
+  const messages = {
+    EN: {
+      routesRegenerated: (dir: string) => `🔄 Routes regenerated due to changes in ${dir} directory`,
+      regenerateError: (dir: string) => `Failed to regenerate routes for ${dir}:`,
+      routesGenerated: '🚀 Routes generated successfully',
+      configureError: 'Failed to configure server:',
+      buildGenerated: '🚀 Routes generated for production build',
+      buildError: 'Failed to generate routes during build:'
+    },
+    CN: {
+      routesRegenerated: (dir: string) => `🔄 已重新生成 ${dir} 目录的路由`,
+      regenerateError: (dir: string) => `重新生成 ${dir} 的路由失败：`,
+      routesGenerated: '🚀 路由生成成功',
+      configureError: '配置服务器失败：',
+      buildGenerated: '🚀 已为生产构建生成路由',
+      buildError: '构建时生成路由失败：'
+    }
+  };
+
+  const msg = messages[options.language || 'EN'];
+
   /**
    * 获取目录名称
    * @param file 文件路径
@@ -54,7 +76,7 @@ function VueAutoRouter(options: PluginOptions = {}): Plugin {
 
     try {
       await generator.generate();
-      console.log(`🔄 Routes regenerated due to changes in ${dirName} directory`);
+      console.log(msg.routesRegenerated(dirName));
       
       server?.ws.send({
         type: 'custom',
@@ -66,7 +88,7 @@ function VueAutoRouter(options: PluginOptions = {}): Plugin {
         }
       });
     } catch (error) {
-      console.error(`Failed to regenerate routes for ${dirName}:`, error);
+      console.error(msg.regenerateError(dirName), error);
     }
   }
 
@@ -105,10 +127,10 @@ function VueAutoRouter(options: PluginOptions = {}): Plugin {
       
       try {
         await generator.generate();
-        console.log('🚀 Routes generated successfully');
+        console.log(msg.routesGenerated);
         enableWatcher();
       } catch (error) {
-        console.error('Failed to configure server:', error);
+        console.error(msg.configureError, error);
         throw error;
       }
     },
@@ -119,9 +141,9 @@ function VueAutoRouter(options: PluginOptions = {}): Plugin {
     async buildStart() {
       try {
         await generator.generate();
-        console.log('🚀 Routes generated for production build');
+        console.log(msg.buildGenerated);
       } catch (error) {
-        console.error('Failed to generate routes during build:', error);
+        console.error(msg.buildError, error);
         throw error;
       }
     },

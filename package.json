@@ -1,6 +1,6 @@
 {
   "name": "@lorcan-store/vue-auto-router",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "A Vite plugin for auto-generating Vue router configuration with smart naming conventions and custom templates",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

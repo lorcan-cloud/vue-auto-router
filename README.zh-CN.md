@@ -42,7 +42,8 @@ export default defineConfig({
       outputDir: 'src/router/',       // 输出目录
       exclude: ['layout'],            // 排除的目录
       layoutPath: '@/pages/layout/index.vue',  // 布局组件路径
-      forceOverwrite: ['home']        // 强制覆盖的目录列表
+      forceOverwrite: ['home'],       // 强制覆盖的目录列表
+      language: 'CN'                  // 控制台输出语言（CN 或 EN）
     })
   ]
 })
@@ -58,6 +59,7 @@ export default defineConfig({
 | layoutPath | string | '@/pages/layout/index.vue' | 布局组件的路径 |
 | forceOverwrite | string[] | [] | 强制覆盖的目录名称列表 |
 | routeTemplate | string | undefined | 自定义路由模板文件路径 |
+| language | 'EN' \| 'CN' | 'EN' | 控制台输出语言 |
 
 ## 目录结构示例
 

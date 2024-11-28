@@ -42,7 +42,8 @@ export default defineConfig({
       outputDir: 'src/router/',       // Output directory
       exclude: ['layout'],            // Directories to exclude
       layoutPath: '@/pages/layout/index.vue',  // Layout component path
-      forceOverwrite: ['home']        // Directories to force overwrite
+      forceOverwrite: ['home'],       // Directories to force overwrite
+      language: 'EN'                  // Console output language (EN or CN)
     })
   ]
 })
@@ -58,6 +59,7 @@ export default defineConfig({
 | layoutPath | string | '@/pages/layout/index.vue' | Layout component path |
 | forceOverwrite | string[] | [] | Directory names to force overwrite |
 | routeTemplate | string | undefined | Custom route template file path |
+| language | 'EN' \| 'CN' | 'EN' | Console output language |
 
 ## Directory Structure Example
 
