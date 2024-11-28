@@ -1,0 +1,64 @@
+{
+  "name": "@lorcan-store/vue-auto-router",
+  "version": "1.3.0",
+  "description": "A Vite plugin for auto-generating Vue router configuration with smart naming conventions and custom templates",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "examples"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "node scripts/clean.js",
+    "build": "npm run clean && tsc",
+    "dev": "tsc -w",
+    "prepublishOnly": "npm run build && npm run generate-docs",
+    "generate-docs": "node scripts/generateReadme.js",
+    "release:patch": "npm version patch && npm publish",
+    "release:minor": "npm version minor && npm publish",
+    "release:major": "npm version major && npm publish",
+    "release": "npm run build && npm run release:patch",
+    "test:naming": "node scripts/test-naming.js",
+    "test:template": "node scripts/test-template.js"
+  },
+  "keywords": [
+    "vite-plugin",
+    "vue-router",
+    "route-generator",
+    "auto-router",
+    "vue3",
+    "lorcan-store"
+  ],
+  "author": "lorcan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lorcan-cloud/vue-auto-router"
+  },
+  "bugs": {
+    "url": "https://github.com/lorcan-cloud/vue-auto-router/issues"
+  },
+  "homepage": "https://github.com/lorcan-cloud/vue-auto-router#readme",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/glob": "latest",
+    "glob": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "vue-router": "latest"
+  },
+  "dependencies": {
+    "glob": "latest"
+  },
+  "peerDependencies": {
+    "vite": "latest",
+    "vue-router": "latest"
+  }
+}
