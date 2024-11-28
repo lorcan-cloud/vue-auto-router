@@ -1,12 +1,12 @@
 {
   "name": "@lorcan-store/vue-auto-router",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A Vite plugin for auto-generating Vue router configuration with smart naming conventions and custom templates",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "examples"
+    "template"
   ],
   "engines": {
     "node": ">=16.0.0"
@@ -19,8 +19,7 @@
     "clean": "node scripts/clean.js",
     "build": "npm run clean && tsc",
     "dev": "tsc -w",
-    "prepublishOnly": "npm run build && npm run generate-docs",
-    "generate-docs": "node scripts/generateReadme.js",
+    "prepublishOnly": "npm run build",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
