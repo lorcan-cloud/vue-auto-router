@@ -198,14 +198,21 @@ VueAutoRouter({
 })
 ```
 
-> 💡 提示：你可以在 [GitHub 仓库](https://github.com/lorcan-cloud/vue-auto-router/tree/main/examples) 中找到完整的模板示例文件。
+> 💡 提示：你可以在 [GitHub 仓库](https://github.com/lorcan-cloud/vue-auto-router/blob/main/examples/route-template.js) 中找到完整的模板示例文件，或者直接从 node_modules/@lorcan-store/vue-auto-router/examples/route-template.js 复制。
 
-模板文件需要导出一个函数，该函数接收三个参数：
-1. dirName: string - 当前处理的目录名
-2. files: string[] - 该目录下的所有 .vue 文件路径（已转换为 @ 别名形式）
-3. context: Object - 包含更多上下文信息的对象（如布局组件路径等）
+### 模板文件位置
 
-示例模板文件 (route-template.js):
+你可以通过以下方式获取模板文件：
+
+1. 从 node_modules 复制：
+```bash
+cp node_modules/@lorcan-store/vue-auto-router/examples/route-template.js src/route-template.js
+```
+
+2. 从 GitHub 仓库下载：
+   - [route-template.js](https://github.com/lorcan-cloud/vue-auto-router/blob/main/examples/route-template.js)
+
+3. 或者直接使用以下内容创建模板文件：
 
 ```javascript
 /**
@@ -219,8 +226,6 @@ module.exports = function(dirName, files, context) {
   // ... 模板实现
 };
 ```
-
-> 📝 注意：你可以直接复制 GitHub 仓库中的模板文件作为起点，然后根据你的需求进行修改。
 
 ## 贡献
 
